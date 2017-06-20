@@ -24,7 +24,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	//   x, y, theta and their uncertainties from GPS) and all weights to 1. 
 
   // set the number of particles
-  num_particles = 20;
+  num_particles = 100;
 
   //Set standard deviations for x, y, and psi.
   double std_x = std[0];
@@ -145,7 +145,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
   double sensor_range_sqrd = pow(sensor_range,2); 
 
     for (int i = 0; i < num_particles; i++) {
-      cout << "x: " << particles[i].x << " y: " << particles[i].y << endl;
       //First find all landmarks that are within range
       std::vector<LandmarkObs> landmarks_in_range;
       for (int j = 0; j < map_landmarks.landmark_list.size(); j++){
@@ -159,7 +158,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
           landmarks_in_range.push_back(myLandmark);
         }
       }
-      // cout << landmarks_in_range.size() << endl;
       if (landmarks_in_range.size()>0){
         // now transform observations to map frame (to match landmarks_in_range coordinate system)
         // assuming the observations were made from the i'th particle's perspective
@@ -187,10 +185,8 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
           double y = observations_map[obs_i].y;
           double ux = map_landmarks.landmark_list[landmark_i].x_f;
           double uy = map_landmarks.landmark_list[landmark_i].y_f;
-          // cout << "x: "<< x << " y: "<< y << endl;   //<< " ux: "<< ux << " uy: "<< uy << endl;
           w*=prob_const * exp(-(pow((x - ux)/std_landmark[0],2)/2.0 + 
                                 pow((y - uy)/std_landmark[1],2)/2.0));
-          // cout << y << endl;
         }
         particles[i].weight = w;
       }
